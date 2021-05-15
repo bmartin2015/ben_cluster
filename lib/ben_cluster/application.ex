@@ -6,11 +6,15 @@ defmodule BenCluster.Application do
   use Application
 
   def start(_type, _args) do
+    topologies = Application.get_env(:libcluster, :topologies) || []
+
     children = [
       # Start the Telemetry supervisor
       BenClusterWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: BenCluster.PubSub},
+      # start libcluster
+      {Cluster.Supervisor, [topologies, [name: ElixirClusterDemo.ClusterSupervisor]]},
       # Start the Endpoint (http/https)
       BenClusterWeb.Endpoint
       # Start a worker by calling: BenCluster.Worker.start_link(arg)
